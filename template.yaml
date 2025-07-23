@@ -1,0 +1,52 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  SAM template for deploying the strands-agents-use-aws application
+
+Globals:
+  Function:
+    Timeout: 300
+
+Resources:
+  StrandsAgentsUseAwsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: strands-agents-use-aws
+      CodeUri: .
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.12
+      MemorySize: 128
+      Layers:
+        - <LayerVersionArn> # TODO: 作成したLambdaレイヤーのARNをここに設定してください
+      Environment:
+        Variables:
+          BEDROCK_REGION: us-east-1
+          MODEL_ID: us.anthropic.claude-sonnet-4-20250514-v1:0
+      Role: !GetAtt StrandsAgentsUseAwsRole.Arn
+
+  StrandsAgentsUseAwsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: strands-agents-use-aws-role
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonBedrockFullAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - arn:aws:iam::aws:policy/CloudWatchLogsReadOnlyAccess
+        - arn:aws:iam::aws:policy/ReadOnlyAccess
+
+Outputs:
+  StrandsAgentsUseAwsFunction:
+    Description: "Strands Agents Use AWS Lambda Function ARN"
+    Value: !GetAtt StrandsAgentsUseAwsFunction.Arn
+  StrandsAgentsUseAwsRole:
+    Description: "IAM Role ARN for Strands Agents Use AWS Lambda Function"
+    Value: !GetAtt StrandsAgentsUseAwsRole.Arn
