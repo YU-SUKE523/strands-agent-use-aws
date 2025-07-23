@@ -25,7 +25,7 @@ AWS SAM (Serverless Application Model) を使用して、Lambda関数と必要�
 まず、このリポジトリをクローンします。
 
 ```bash
-git clone https://github.com/YU-SUKE523/strands-agent-use-aws.git
+git clone https://github.com/YU-SUKE523/strands-agents-use-aws.git
 cd strands-agents-use-aws
 ```
 
