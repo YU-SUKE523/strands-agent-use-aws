@@ -1,0 +1,4 @@
+# Lambda関数用のrequirements.txt
+# Strands SDKはレイヤーに含まれているため除外
+boto3
+typing-extensions

@@ -25,7 +25,7 @@ AWS SAM (Serverless Application Model) を使用して、Lambda関数と必要�
 まず、このリポジトリをクローンします。
 
 ```bash
-git clone https://github.com/YU-SUKE523/strands-agents-use-aws.git
+git clone <repository_url>
 cd strands-agents-use-aws
 ```
 
@@ -67,7 +67,7 @@ cd strands-agents-use-aws
         --layer-name strands-layer \
         --description "Layer for Strands SDK" \
         --content S3Bucket=<YOUR_S3_BUCKET>,S3Key=strands-layer.zip \
-        --compatible-runtimes python3.12
+        --compatible-runtimes python3.11 python3.12
     ```
     コマンドが成功すると、`LayerVersionArn` が出力されます。このARNを次のステップで使用します。
 
@@ -92,17 +92,52 @@ cd strands-agents-use-aws
 
 SAMを使用してアプリケーションをビルドし、デプロイします。
 
-1.  **SAMビルド**
+0.  **Python 3.12のインストール（CloudShellの場合）**
+    CloudShellではPython 3.12がデフォルトでインストールされていないため、手動でインストールします。
 
     ```bash
-    sam build
+    # Python 3.12をインストール
+    sudo dnf install python3.12 python3.12-devel python3.12-pip -y
+    
+    # インストール確認
+    python3.12 --version
     ```
 
-2.  **SAMデプロイ**
+1.  **Lambda関数ビルド用のrequirements.txtを準備**
+    レイヤーとの重複を避けるため、requirements.txtを一時的にリネームします。
+
+    ```bash
+    # レイヤー用のrequirements.txtをバックアップ
+    mv requirements.txt layer-requirements.txt
+    
+    # Lambda関数には最小限の依存関係のみ（boto3は Lambda環境に含まれているため不要）
+    echo "# No additional dependencies needed - using layer" > requirements.txt
+    ```
+
+2.  **SAMビルド**
+    インストールしたPython 3.12を指定してビルドします。
+
+    ```bash
+    # Python 3.12を使用してビルド
+    PYTHON_PATH=$(which python3.12) sam build
+    
+    # ビルド後のサイズを確認
+    du -sh .aws-sam/build/StrandsAgentsUseAwsFunction/
+    ```
+
+3.  **SAMデプロイ**
     対話形式でデプロイを進めます。スタック名などを指定してください。
 
     ```bash
     sam deploy --guided
+    ```
+
+4.  **デプロイ後の後片付け**
+    デプロイ完了後、requirements.txtを元に戻します。
+
+    ```bash
+    # 元のrequirements.txtに戻す
+    mv layer-requirements.txt requirements.txt
     ```
 
 以上でデプロイは完了です。

@@ -23,6 +23,8 @@ Resources:
           BEDROCK_REGION: us-east-1
           MODEL_ID: us.anthropic.claude-sonnet-4-20250514-v1:0
       Role: !GetAtt StrandsAgentsUseAwsRole.Arn
+    Metadata:
+      BuildMethod: python3.12
 
   StrandsAgentsUseAwsRole:
     Type: AWS::IAM::Role
