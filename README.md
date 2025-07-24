@@ -129,7 +129,7 @@ SAMを使用してアプリケーションをビルドし、デプロイしま�
     対話形式でデプロイを進めます。スタック名などを指定してください。
 
     ```bash
-    sam deploy --guided
+    sam deploy --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM --guided
     ```
 
 4.  **デプロイ後の後片付け**
